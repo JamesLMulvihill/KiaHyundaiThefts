@@ -1,0 +1,198 @@
+---
+title: "James Mulvihill Weeks 5-6"
+author: "James Mulvihill"
+date: "2025-01-26"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Purchasing Bait Cars
+
+To the Milwaukee Police Chief,
+
+As you decide on purchasing the next batch of bait cars, I'd like to point out that not only have car thefts been on the rise nationwide in the past few years, but also that Kias have been targeted much more frequently, particularly here in Milwaukee. Below are several graphics taken from data collected nationwide to support these two claims.
+
+```{r, include=FALSE}
+
+library(readxl)
+KiaHyundaiMilwaukeeData <- read.csv('https://content.bellevue.edu/cst/dsc/640/2024Update/Datasets/KiaHyundaiMilwaukeeData.csv')
+carTheftsMap <- read.csv('https://content.bellevue.edu/cst/dsc/640/2024Update/Datasets/carTheftsMap.csv')
+kiaHyundaiThefts <- read.csv('https://content.bellevue.edu/cst/dsc/640/2024Update/Datasets/kiaHyundaiThefts.csv')
+vice <- read_excel('C:/Users/james.mulvihill/Downloads/Motherboard VICE News Kia Hyundai Theft Data.xlsx')
+```
+
+```{r, echo=FALSE}
+
+# load library
+library(ggplot2)
+library(dplyr, warn.conflicts = FALSE)
+ 
+KiaThefts = sum(kiaHyundaiThefts$countKiaHyundaiThefts)
+OtherThefts = sum(kiaHyundaiThefts$countOtherThefts)
+
+# Create test data.
+df <- data.frame(
+  group=c("Kia Thefts", "Other Thefts"),
+  value=c(KiaThefts, OtherThefts)
+)
+ 
+hsize <- 2
+
+df <- df %>% 
+  mutate(x = hsize)
+
+ggplot(df, aes(x = hsize, y = value, fill = group)) +
+  geom_col() +
+  geom_text(aes(label = value),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) + 
+  ggtitle("Total Kia Thefts Compared to All Others Nationwide 2019 - 2022") 
+
+```
+
+```{r, echo=FALSE}
+library(reshape, warn.conflicts = FALSE)
+
+top5 = head(carTheftsMap[order(-suppressWarnings(as.numeric(unlist(carTheftsMap$countCarThefts2022)))),],5)
+
+df = data.frame(top5$geo_name,top5$countCarThefts2019,top5$countCarThefts2020,top5$countCarThefts2021,top5$countCarThefts2022)
+
+colnames(df) <- c("City","2019","2020","2021","2022")
+
+df = melt(df, id = c("City"))
+
+# colnames(df) <- c("City","Year","Cars Stolen")
+colnames(df) <- c("city","year","cars")
+df = transform(df, cars = suppressWarnings(as.numeric(cars)))
+df = transform(df, year = as.character(year))
+df = transform(df, year = suppressWarnings(as.numeric(year)))
+
+ggplot(df, aes(x=year, y=cars, fill=city)) + geom_area() + 
+  ggtitle("Car Thefts are on the rise in Major US Cities")  
+
+```
+
+```{r, echo=FALSE}
+CarThefts = c(sum(as.numeric(unlist(vice[c(3:14),156]))),sum(as.numeric(unlist(vice[c(15:26),156]))),sum(as.numeric(unlist(vice[c(27:38),156]))))
+
+Years = c(2020, 2021, 2022)
+
+data = data.frame(Years, CarThefts)
+
+ggplot(data, aes(x=Years, y=CarThefts)) + geom_area() + 
+  ggtitle("Car Thefts Reported by Vice in Milwaukee 2020 - 2022") 
+```
+
+
+```{r, echo=FALSE}
+
+# load library
+library(ggplot2)
+library(dplyr)
+ 
+KiaThefts = sum(KiaHyundaiMilwaukeeData[which(KiaHyundaiMilwaukeeData[,2]==2020),5])
+OtherThefts = sum(KiaHyundaiMilwaukeeData[which(KiaHyundaiMilwaukeeData[,2]==2020),6])
+
+# Create test data.
+df <- data.frame(
+  group=c("Kia Thefts", "Other Thefts"),
+  value=c(KiaThefts, OtherThefts)
+)
+ 
+hsize <- 2
+
+df <- df %>% 
+  mutate(x = hsize)
+
+ggplot(df, aes(x = hsize, y = value, fill = group)) +
+  geom_col() +
+  geom_text(aes(label = value),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  xlim(c(0.2, hsize + 0.5)) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) + 
+  ggtitle("Number of Kia Thefts Compared to All Others in 2020 in Milwaukee") 
+```
+
+```{r, echo=FALSE}
+
+# load library
+library(ggplot2)
+library(dplyr)
+ 
+KiaThefts = sum(KiaHyundaiMilwaukeeData[which(KiaHyundaiMilwaukeeData[,2]==2021),5])
+OtherThefts = sum(KiaHyundaiMilwaukeeData[which(KiaHyundaiMilwaukeeData[,2]==2021),6])
+
+# Create test data.
+df <- data.frame(
+  group=c("Kia Thefts", "Other Thefts"),
+  value=c(KiaThefts, OtherThefts)
+)
+ 
+hsize <- 2
+
+df <- df %>% 
+  mutate(x = hsize)
+
+ggplot(df, aes(x = hsize, y = value, fill = group)) +
+  geom_col() +
+  geom_text(aes(label = value),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  xlim(c(0.2, hsize + 0.5)) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) + 
+  ggtitle("Number of Kia Thefts Compared to All Others in 2021 in Milwaukee") 
+```
+
+```{r, echo=FALSE}
+
+# load library
+library(ggplot2)
+library(dplyr)
+ 
+KiaThefts = sum(KiaHyundaiMilwaukeeData[which(KiaHyundaiMilwaukeeData[,2]==2022),5])
+OtherThefts = sum(KiaHyundaiMilwaukeeData[which(KiaHyundaiMilwaukeeData[,2]==2022),6])
+
+# Create test data.
+df <- data.frame(
+  group=c("Kia Thefts", "Other Thefts"),
+  value=c(KiaThefts, OtherThefts)
+)
+ 
+hsize <- 2
+
+df <- df %>% 
+  mutate(x = hsize)
+
+ggplot(df, aes(x = hsize, y = value, fill = group)) +
+  geom_col() +
+  geom_text(aes(label = value),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  xlim(c(0.2, hsize + 0.5)) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) + 
+  ggtitle("Number of Kia Thefts Compared to All Others in 2022 in Milwaukee") 
+```
+
+As shown the proportion of Kia thefts is even larger in Milwaukee compared to other cities and it has greatly increased in 2021 and 2022 compared to previous years, so I would advise purchasing Kia for the next batch of bait cars.
+
